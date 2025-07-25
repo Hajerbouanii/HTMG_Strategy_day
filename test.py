@@ -25,7 +25,7 @@ if st.session_state.username == "":
 
     if username:
         st.session_state.username = username
-        st.experimental_rerun()
+        st.rerun()
 
 else:
     st.sidebar.title(f"🎮 Player: {st.session_state.username}")
@@ -73,81 +73,99 @@ else:
                 st.balloons()
                 st.session_state.score += 1
                 st.session_state.game_stage += 1
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Hmm, not quite. Look at that spike again!")
 
     # === GAME 2 ===
     elif st.session_state.game_stage == 1:
-        st.header("🛰️ Game 2: Help an FE find the tallest tower")
-        st.image("https://i.imgur.com/zB4nFsn.png", width=400)
+        st.title("🧠 Game 2: The Mystery of the Missing Fuel")
 
         st.markdown(
             """
-        A field engineer just landed in Tanzania, and their first task is to climb the **tallest tower** in the region.
+            One of your sites has unusual fuel consumption, and the Field Engineer suspects something’s off.
+            
+            You have the last 7 days of fuel data (in liters):
 
-        🔍 Use the Quickbase API and ChatGPT to find the site with the tallest tower.
+            ```python
+            [88, 91, 85, 300, 89, 87, 90]
+            ```
 
-        **Copy and paste this prompt into ChatGPT:**
-        ```
-        Use the Quickbase API to find the site with the tallest tower.
-        API: https://api.quickbase.com/v1/records/query
-        Token: b8pdtw_qq8q_0_5ikmhkb742wheds46gbureswxu
-        Table ID: buq926ivz
-        Realm: uirtus
-        Fields: Site ID (19), Tower Height (114)
+            But your boss doesn’t have time to check it — they told you:
 
-        Return the site ID of the tallest tower.
-        ```
-        """
+            > "`Please help me analyze the fuel consumption data The data set is [88, 91, 85, 300, 89, 87, 90]. Anything unusual?`"
+            """
         )
 
-        answer = (
-            st.text_input("Enter the Site ID of the tallest tower:").strip().upper()
+        st.info(
+            "👀 Tip: Open ChatGPT, paste the data and the prompt above, and see what it tells you."
         )
+
+        user_answer = st.text_input(
+            "What did you find out from ChatGPT? (Keep it short)", ""
+        ).strip()
+
+        # Keywords that indicate the user spotted the anomaly
+        success_keywords = ["day 4", "300", "anomaly", "spike", "suspicious", "unusual"]
+
         if st.button("Submit Game 2"):
-            if answer == correct_answers[1]:
-                st.success("Correct! The FE has packed their climbing gear. 🧗‍♂️")
-                st.balloons()
+            if any(keyword in user_answer.lower() for keyword in success_keywords):
+                st.success(
+                    "✅ Correct! Day 4 stands out with 300 liters — great job using ChatGPT for analysis."
+                )
                 st.session_state.score += 1
                 st.session_state.game_stage += 1
-                st.experimental_rerun()
+                st.balloons()
+                st.rerun()
             else:
-                st.error("Hmm, that’s not the tallest. Try again!")
+                st.warning(
+                    "Hmm... that doesn't seem quite right. Try prompting ChatGPT with the data!"
+                )
 
     # === GAME 3 ===
     elif st.session_state.game_stage == 2:
-        st.header("🌍 Game 3: Map the Strong Towers")
-        st.image("https://i.imgur.com/KGHshtj.jpeg", width=400)
+        st.header("🏙️ Game 3: Rent Race — Prompt Your Way to the Top")
+        st.image("https://i.imgur.com/N2dztxz.png", width=400)
 
         st.markdown(
             """
-        We only want to visit towers with a strong structure!
+            Helios is reviewing lease rates across regions.
 
-        🧠 Use the Quickbase API to pull towers with **structure capacity > 500** and plot them using `folium`.
+            You're given simulated data for 3 regions:
+            - **Bas-Congo**: 3500, 4200, 3900
+            - **Kinshasa**: 4400, 4100, 4300
+            - **Equateur**: 3600, 3700, 3650
 
-        **Copy and paste this into ChatGPT:**
-        ```
-        Use Quickbase API to fetch tower sites with lat/lon and structure capacity > 500.
-        API: https://api.quickbase.com/v1/records/query
-        Token: b8pdtw_qq8q_0_5ikmhkb742wheds46gbureswxu
-        Table ID: buq926ivz
-        Fields: Latitude (22), Longitude (23), Structure Capacity (26)
+            Your boss tells you:
 
-        Plot these towers on a folium map and count how many appear.
-        ```
-        """
+            > *“Use ChatGPT to figure out which region has the highest **average lease rate**. Just tell it what you want — no need to write code yourself!”*
+
+            ---
+            👇 Example Prompt You Could Use:
+            > *“I have lease rates for 3 regions. Can you calculate the average for each and tell me which one is highest?”*
+
+            You can also copy this sample message:
+            ```
+            I have lease rates for 3 regions:
+            Bas-Congo: 3500, 4200, 3900
+            Kinshasa: 4400, 4100, 4300
+            Equateur: 3600, 3700, 3650
+            Which region has the highest average lease rate?
+            ```
+
+            🧠 **Hint**: It's not about memorizing — it's about clearly communicating with ChatGPT.
+            """
         )
 
-        answer = st.text_input("How many towers were shown on your map?")
+        answer = st.text_input("Which region has the highest average lease rate?")
         if st.button("Submit Game 3"):
-            if answer == correct_answers[2]:
-                st.success("That’s right! You’ve mapped the strongest towers. 🗺️")
+            if answer.strip().lower() == "kinshasa":
+                st.success("📈 Correct! Kinshasa pays the premium 💰")
                 st.session_state.score += 1
                 st.session_state.game_stage += 1
-                st.experimental_rerun()
+                st.rerun()
             else:
-                st.error("Hmm, that count doesn’t match. Try again!")
+                st.error("That's not the top payer. Try your prompt again!")
 
     # === GAME 4 ===
     elif st.session_state.game_stage == 3:
@@ -175,7 +193,7 @@ else:
                 st.success("You did it! You’ve built the tower of the future! 🚀")
                 st.session_state.score += 1
                 st.session_state.game_stage += 1
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Almost there! Double-check your output height.")
 
@@ -190,4 +208,4 @@ else:
             st.session_state.username = ""
             st.session_state.game_stage = 0
             st.session_state.score = 0
-            st.experimental_rerun()
+            st.rerun()
