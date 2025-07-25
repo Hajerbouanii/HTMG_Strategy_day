@@ -35,9 +35,6 @@ else:
     # === GAME 1 ===
     if st.session_state.game_stage == 0:
         st.header("⛽ Game 1: Fuel Tracker")
-        st.image(
-            "https://i.imgur.com/KI7XgUb.png", width=400
-        )  # Replace with your image
 
         st.markdown(
             """
@@ -77,55 +74,77 @@ else:
             else:
                 st.error("Hmm, not quite. Look at that spike again!")
 
-    # === GAME 2 ===
+        # === GAME 2 ===
     elif st.session_state.game_stage == 1:
-        st.title("🧠 Game 2: The Mystery of the Missing Fuel")
+        st.title("🌐 Game 2: Map the Power Outliers")
 
         st.markdown(
             """
-            One of your sites has unusual fuel consumption, and the Field Engineer suspects something’s off.
-            
-            You have the last 7 days of fuel data (in liters):
+            One of your regional managers at Helios just called:
 
+            > _“We think some sites have **unusual power uptime** — maybe they're running too well... or too poorly. Can you show us the hotspots on a map?”_
+
+            🚧 Your mission is to visualize this across all sites using two real APIs:
+            - The **Quickbase** site info database
+            - The **Overwatch** power metrics API
+
+            You'll combine both datasets and **build a heatmap** showing power uptime intensity across sites.
+
+            ---
+            🧠 **Copy this prompt into ChatGPT exactly as shown below to generate the working Python code:**
             ```python
-            [88, 91, 85, 300, 89, 87, 90]
+            Write Python code that:
+
+            1. Calls the Quickbase API using:
+                - URL: https://api.quickbase.com/v1/records/query
+                - Realm: "uirtus"
+                - Table ID: "buq926ivz"
+                - Field IDs: [19, 22, 23, 114, 26]
+                - Token: "b8pdtw_qq8q_0_5ikmhkb742wheds46gbureswxu"
+
+            2. Fetches additional site data from:
+                - URL: http://52.142.192.63/overwatch/v1/sitedata/?records=99999
+                - Headers: {"Authorization": "Basic RFN3b2VuZHdydDpkc25qc2QzNG41NCMybTU0ISFSVA=="}
+
+            3. Processes and cleans both datasets:
+                - Replaces string 'NaN' with np.nan
+                - Converts date columns to datetime
+                - Flattens nested Quickbase fields
+                - Merges datasets on site ID
+                - Keeps rows with latitude, longitude, and power uptime
+
+            4. Plots a **folium heatmap** of `Power_uptime` using:
+                - Lat: "Site - Lat (D/M/S)_value"
+                - Lon: "Site - Long (D/M/S)_value"
+                - Value: "Power_uptime"
+                - Color scale: blue → yellow → red
+
+            5. Adds a legend (LinearColormap) for power uptime
+
+            6. Saves the map as `power_uptime_heatmap_with_legend.html`
+
+            The output must include the full working script, using:
+            - pandas, numpy, requests, folium, branca.colormap, and folium.plugins.HeatMap
+            - No simplification — give me the exact production-level code for this task
             ```
 
-            But your boss doesn’t have time to check it — they told you:
+            ---
+            🔍 When you run the code in your local Python environment, it will generate a heatmap showing which Helios sites have the **lowest and highest power uptime**. Those red zones? You might want to check them out.
 
-            > "`Please help me analyze the fuel consumption data The data set is [88, 91, 85, 300, 89, 87, 90]. Anything unusual?`"
+            ✅ Once you’ve created your map, hit **Finish** to continue.
             """
         )
 
-        st.info(
-            "👀 Tip: Open ChatGPT, paste the data and the prompt above, and see what it tells you."
-        )
-
-        user_answer = st.text_input(
-            "What did you find out from ChatGPT? (Keep it short)", ""
-        ).strip()
-
-        # Keywords that indicate the user spotted the anomaly
-        success_keywords = ["day 4", "300", "anomaly", "spike", "suspicious", "unusual"]
-
-        if st.button("Submit Game 2"):
-            if any(keyword in user_answer.lower() for keyword in success_keywords):
-                st.success(
-                    "✅ Correct! Day 4 stands out with 300 liters — great job using ChatGPT for analysis."
-                )
-                st.session_state.score += 1
-                st.session_state.game_stage += 1
-                st.balloons()
-                st.rerun()
-            else:
-                st.warning(
-                    "Hmm... that doesn't seem quite right. Try prompting ChatGPT with the data!"
-                )
+        if st.button("Finish Game 2"):
+            st.session_state.score += 1
+            st.session_state.game_stage += 1
+            st.balloons()
+            st.rerun()
 
     # === GAME 3 ===
     elif st.session_state.game_stage == 2:
         st.header("🏙️ Game 3: Rent Race — Prompt Your Way to the Top")
-        st.image("https://i.imgur.com/N2dztxz.png", width=400)
+        # st.image("https://i.imgur.com/N2dztxz.png", width=400)
 
         st.markdown(
             """
@@ -167,45 +186,35 @@ else:
             else:
                 st.error("That's not the top payer. Try your prompt again!")
 
-    # === GAME 4 ===
+        # === GAME 4 ===
     elif st.session_state.game_stage == 3:
         st.header("🏗️ Game 4: Build the 3D Tower")
-        st.image("https://i.imgur.com/xuwKQ6y.jpeg", width=400)
+        # st.image("https://i.imgur.com/xuwKQ6y.jpeg", width=400)
 
         st.markdown(
             """
-        Let’s visualize your dream tower in 3D with alternating red and white segments.
+            Let’s visualize your dream tower in 3D with alternating red and white segments.
 
-        **Copy this prompt into ChatGPT:**
-        ```
-        Use Plotly in Python to create a 3D tower with 6 stacked cylinders.
-        - Each 10m high
-        - Alternate red and white
-        - Use go.Cylinder or go.Mesh3d if available
-        Label each segment
-        ```
-        """
+            🧱 Your tower will be built using stacked 10m-high cylinders.
+
+            ---
+            📋 **Copy this prompt into ChatGPT:**
+            ```python
+            Use Plotly in Python to create a 3D tower with 6 stacked cylinders.
+            - Each cylinder is 10 meters high
+            - Alternate red and white colors
+            - Use go.Cylinder or go.Mesh3d if available
+            - Label each segment with its height level
+            - Make it look cool!
+            ```
+
+            ---
+            🔍 This is your final creative mission — no right or wrong answers, just fun with Python and visualization!
+            """
         )
 
-        answer = st.text_input("What is the total height of your tower?")
-        if st.button("Submit Final Game"):
-            if answer == correct_answers[3]:
-                st.success("You did it! You’ve built the tower of the future! 🚀")
-                st.session_state.score += 1
-                st.session_state.game_stage += 1
-                st.rerun()
-            else:
-                st.error("Almost there! Double-check your output height.")
-
-    # === COMPLETED ===
-    else:
-        st.success("🎉 You’ve completed all 4 challenges!")
-        st.markdown(f"**Total Score:** {st.session_state.score}/4 ⭐")
-        st.balloons()
-
-        st.markdown("Want to play again?")
-        if st.button("Restart Game"):
-            st.session_state.username = ""
-            st.session_state.game_stage = 0
-            st.session_state.score = 0
+        if st.button("Finish Game 4"):
+            st.session_state.score += 1
+            st.session_state.game_stage += 1
+            st.balloons()
             st.rerun()
